@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Cadastro de Membros - Assembleia de Deus</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+
+<div class="container">
+    <header style="text-align: center; margin-bottom: 30px;">
+        <h1>Sistema de Gestão e Emissão de Carteirinhas</h1>
+        <p>Igreja Evangélica Assembleia de Deus - Ministério de Anápolis (Goiânia-GO)</p>
+    </header>
+
+    <div class="grid-layout">
+        <section class="form-section">
+            <h2>Novo Cadastro</h2>
+            <form id="cadastro-form">
+                <div class="form-group">
+                    <label>Nome Completo:</label>
+                    <input type="text" name="nome" required placeholder="Ex: Marizonia Nascimento Barros">
+                </div>
+                
+                <div class="grid-layout" style="gap: 10px; margin-bottom: 0;">
+                    <div class="form-group" style="flex: 1;">
+                        <label>Atividade/Cargo:</label>
+                        <input type="text" name="atividade" value="MEMBRO" required>
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label>Batismo em Águas:</label>
+                        <input type="date" name="dataBatismo" required>
+                    </div>
+                </div>
+
+                <div class="grid-layout" style="gap: 10px; margin-bottom: 0;">
+                    <div class="form-group" style="flex: 1;">
+                        <label>Data Emissão:</label>
+                        <input type="date" name="emissao" required>
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label>Data Validade:</label>
+                        <input type="date" name="validade" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Nome do Pai:</label>
+                    <input type="text" name="pai" placeholder="Nome do pai">
+                </div>
+                <div class="form-group">
+                    <label>Nome da Mãe:</label>
+                    <input type="text" name="mae" placeholder="Nome da mãe">
+                </div>
+
+                <div class="grid-layout" style="gap: 10px; margin-bottom: 0;">
+                    <div class="form-group" style="flex: 1;">
+                        <label>Naturalidade:</label>
+                        <input type="text" name="naturalidade" placeholder="Ex: Barra do Corda MA">
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label>Estado Civil:</label>
+                        <select name="estadoCivil">
+                            <option value="CASADA">Casada(o)</option>
+                            <option value="SOLTEIRA">Solteira(o)</option>
+                            <option value="VIÚVA">Viúva(o)</option>
+                            <option value="DIVORCIADA">Divorciada(o)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid-layout" style="gap: 10px; margin-bottom: 0;">
+                    <div class="form-group" style="flex: 1;">
+                        <label>Data de Nascimento:</label>
+                        <input type="date" name="dataNascimento" required>
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label>Sexo:</label>
+                        <select name="sexo">
+                            <option value="F">Feminino</option>
+                            <option value="M">Masculino</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid-layout" style="gap: 10px; margin-bottom: 0;">
+                    <div class="form-group" style="flex: 2;">
+                        <label>Identidade (RG):</label>
+                        <input type="text" name="identidade" required placeholder="Apenas números/traço">
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label>Órgão:</label>
+                        <input type="text" name="orgao" placeholder="Ex: DGPCMA" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Foto do Membro (Perfil):</label>
+                    <input type="file" id="membro-foto" accept="image/*" required>
+                </div>
+
+                <button type="submit" style="width: 100%; margin-top: 10px;">Cadastrar Membro</button>
+            </form>
+        </section>
+
+        <section class="list-section">
+            <h2>Membros Cadastrados</h2>
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Cargo</th>
+                            <th>RG</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabela-membros-corpo">
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+
+    <section class="preview-section" id="preview-section" style="display: none;">
+        <h2>Visualização da Carteirinha</h2>
+        
+        <div id="area-para-snapshot" style="background-color: white; padding: 15px; border-radius: 8px; width: fit-content; margin: 0 auto;">
+            
+            <div class="carteirinha-wrapper" id="carteirinha-print-area">
+                <div class="card-face">
+                    <div class="frente-header">
+                        <div class="logo-placeholder">
+                            <img src="https://supabase.acheisistemas.com.br/storage/v1/object/public/midias/downloads/capas/ut0i542ysfh_1779282575921.png" class="logo-igreja">
+                        </div>
+                        <div class="header-text">
+                            <h3>IGREJA EVANGÉLICA ASSEMBLEIA DE DEUS</h3>
+                            <p style="font-weight: bold; color: #cca43b;">MINISTÉRIO DE ANÁPOLIS</p>
+                            <p>Av. Vale dos sonhos, Qd. 28 Lt. 25/26 - B. São Domingos - Goiânia GO</p>
+                            <p>Pr. Manoel Ribeiro dos Santos</p>
+                        </div>
+                    </div>
+                    
+                    <div class="frente-body">
+                        <div class="foto-box">
+                            <img id="card-view-foto" src="" alt="Foto">
+                        </div>
+                        <div class="dados-principais">
+                            <h4 class="membro-nome" id="card-view-nome">---</h4>
+                            
+                            <div class="info-row">
+                                <div class="info-block">
+                                    <label>Atividade:</label>
+                                    <span id="card-view-atividade">---</span>
+                                </div>
+                                <div class="info-block">
+                                    <label>Batismo/Águas:</label>
+                                    <span id="card-view-batismo">---</span>
+                                </div>
+                            </div>
+
+                            <div class="info-row">
+                                <div class="info-block">
+                                    <label>Emissão:</label>
+                                    <span id="card-view-emissao">---</span>
+                                </div>
+                                <div class="info-block">
+                                    <label>Validade:</label>
+                                    <span id="card-view-validade" style="color: red;">---</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="frente-footer">OBRIGATÓRIA A APRESENTAÇÃO DE DOCUMENTO DE IDENTIDADE</div>
+                </div>
+
+                <div class="card-face">
+                    <div class="verso-body">
+                        <div class="verso-grid">
+                            <div class="verso-dados">
+                                <div class="verso-info"><label>PAI:</label><span id="card-view-pai">---</span></div>
+                                <div class="verso-info"><label>MÃE:</label><span id="card-view-mae">---</span></div>
+                                
+                                <div style="display: flex; gap: 15px;">
+                                    <div class="verso-info"><label>NATURALIDADE:</label><span id="card-view-nat">---</span></div>
+                                    <div class="verso-info"><label>ESTADO CIVIL:</label><span id="card-view-ec">---</span></div>
+                                </div>
+
+                                <div style="display: flex; gap: 15px;">
+                                    <div class="verso-info"><label>DATA DE NASC.:</label><span id="card-view-nasc">---</span></div>
+                                    <div class="verso-info"><label>SEXO:</label><span id="card-view-sexo">---</span></div>
+                                </div>
+
+                                <div style="display: flex; gap: 15px;">
+                                    <div class="verso-info"><label>IDENTIDADE:</label><span id="card-view-rg">---</span></div>
+                                    <div class="verso-info"><label>ÓRGÃO:</label><span id="card-view-orgao">---</span></div>
+                                </div>
+                                
+                                <p class="versiculo">"PORTANTO, IDE, ENSINAI TODAS AS NAÇÕES, BATIZANDO-AS EM NOME DO PAI, E DO FILHO, E DO ESPÍRITO SANTO." (MT 28.19)</p>
+                            </div>
+
+                            <div class="verso-side">
+                                
+                                <div class="assinatura-area">
+                                    <div class="linha-assinatura"></div>
+                                    <p>PASTOR</p>
+                                </div>
+                                <p class="verso-footer-text">VÁLIDO COMO IDENTIFICADOR DE MEMBRO DA IGREJA LOCAL.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+        <div class="actions-nav">
+            <button id="btn-print" style="background-color: #5cb85c;">Imprimir Carteirinha</button>
+            <button id="btn-whatsapp" style="background-color: #25D366;">Compartilhar p/ WhatsApp</button>
+        </div>
+
+    </section>
+</div>
+
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

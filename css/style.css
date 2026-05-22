@@ -1,0 +1,211 @@
+/* --- ESTILOS GERAIS DO SITE (MANTENDO SEU LAYOUT) --- */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f6f9;
+    margin: 0;
+    padding: 20px;
+    color: #333;
+}
+
+.container { max-width: 1200px; margin: 0 auto; }
+
+.grid-layout { display: flex; flex-wrap: wrap; gap: 20px; }
+
+.form-section, .list-section {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    flex: 1;
+    min-width: 350px;
+}
+
+.form-group { margin-bottom: 12px; }
+.form-group label { display: block; font-weight: 600; margin-bottom: 4px; font-size: 13px; }
+.form-group input, .form-group select { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+
+button {
+    background-color: #0b2545;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.2s;
+}
+button:hover { background-color: #134074; }
+
+table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+th, td { padding: 10px; text-align: left; border-bottom: 1px solid #ddd; font-size: 14px; }
+th { background-color: #0b2545; color: white; }
+
+/* --- ESTILOS EXCLUSIVOS DA CARTEIRINHA (NÃO AFETAM O SITE) --- */
+.preview-section {
+    background: #eef1f6;
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 25px;
+    text-align: center;
+}
+
+.carteirinha-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    margin-top: 15px;
+}
+
+.card-face {
+    width: 480px;
+    height: 300px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    position: relative;
+    overflow: hidden;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+    text-align: left;
+    border: 1px solid #ccc;
+}
+
+.card-face::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 12px;
+    background: #0b2545;
+}
+
+.frente-header { padding: 20px 15px 5px 15px; display: flex; align-items: center; gap: 10px; }
+.logo-placeholder { 
+    width: 45px; height: 45px; background: #f8f7f6; color: #0b2545; 
+    border-radius: 50%; display: flex; align-items: center; justify-content: center; 
+    font-size: 8px; font-weight: bold; text-align: center;
+}
+
+.frente-footer {
+    background: #0b2545; /* Cor azul escura de fundo */
+    color: white;       /* Letra branca */
+    text-align: center; /* Texto centralizado */
+    padding: 5px;       /* Espaço interno */
+    font-size: 9px;     /* Letra bem pequena */
+}
+
+.versiculo {
+    font-size: 8px;      /* Fonte bem pequena */
+    font-style: italic;  /* Letra deitada */
+    color: #444;         /* Cor cinza escura */
+    margin-top: 10px;    /* Espaço em cima */
+    border-left: 2px solid #cca43b; /* Uma linha dourada do lado */
+    padding-left: 5px;   /* Espaço entre a linha e o texto */
+}
+
+.logo-igreja {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+/* Área de Assinatura */
+.assinatura-area {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.linha-assinatura {
+    width: 90%;
+    border-top: 1px solid #000;
+    margin-bottom: 5px;
+}
+
+.assinatura-area p {
+    margin: 0;
+    font-size: 8px;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #333;
+}
+
+/* Rodapé do Verso */
+.verso-footer-text {
+    margin-top: 15px;
+    font-size: 7px;          /* Fonte bem pequena para rodapé */
+    font-weight: bold;
+    text-align: center;      /* Centralizado */
+    color: #0b2545;          /* Cor azul escuro para combinar com a logo */
+    text-transform: uppercase;
+    line-height: 1.2;        /* Espaçamento entre linhas ajustado */
+    padding: 0 5px;
+    border-top: 1px solid #ccc; /* Linha sutil acima do texto */
+    padding-top: 5px;
+}
+
+/* Espaçamento entre a carteirinha e os botões */
+.actions-nav {
+    margin-top: 30px;        /* Aumenta a distância de cima */
+    display: flex;           /* Garante que fiquem alinhados */
+    justify-content: center; /* Centraliza os botões */
+    gap: 15px;               /* Espaço entre um botão e outro */
+    padding-bottom: 50px;    /* Espaço extra caso o site termine ali */
+}
+
+/* Opcional: Para deixar os botões mais elegantes */
+.actions-nav button {
+    padding: 10px 20px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    font-weight: bold;
+}
+
+#area-para-snapshot {
+    /* Isso garante que, mesmo que o container esteja escondido, 
+       ele tenha um tamanho definido para a foto sair perfeita */
+    width: 550px; 
+    background-color: white; 
+    padding: 20px;
+}
+.header-text h3 { margin: 0; font-size: 11px; color: #0b2545; font-weight: 900; }
+.header-text p { margin: 2px 0 0 0; font-size: 8px; color: #555; }
+
+.frente-body { display: flex; padding: 10px 15px; gap: 15px; }
+.foto-box { width: 100px; height: 120px; border: 2px solid #0b2545; border-radius: 4px; overflow: hidden; }
+.foto-box img { width: 100%; height: 100%; object-fit: cover; }
+
+.membro-nome { font-size: 16px; font-weight: bold; color: #0b2545; margin: 0 0 5px 0; text-transform: uppercase; }
+.info-row { display: flex; gap: 10px; margin-bottom: 5px; }
+.info-block label { display: block; font-size: 8px; color: #777; font-weight: bold; text-transform: uppercase; }
+.info-block span { font-size: 11px; font-weight: bold; color: #222; }
+
+.verso-body { padding: 15px; height: 100%; box-sizing: border-box; display: flex; justify-content: space-between; }
+.verso-info { margin-bottom: 5px; }
+.verso-info label { display: block; font-size: 8px; color: #666; font-weight: bold; }
+.verso-info span { font-size: 11px; font-weight: bold; text-transform: uppercase; }
+.qrcode-box { width: 80px; height: 80px; border: 1px solid #ccc; }
+.qrcode-box img { width: 100%; height: 100%; }
+
+/* Impressão */
+@media print {
+    body * { visibility: hidden; }
+    .preview-section, .carteirinha-wrapper, .card-face, .card-face * { visibility: visible; }
+    .preview-section { position: absolute; left: 0; top: 0; background: none; }
+    .actions-nav { display: none; }
+
+    
+}
+
+/* Bloqueia vazamento visual na hora de gerar a imagem */
+#preview-section {
+    position: relative;
+    overflow: hidden; 
+}
+
+/* Garante que o fundo da foto seja branco, mesmo se o site for cinza */
+#area-para-snapshot {
+    background-color: white !important;
+}

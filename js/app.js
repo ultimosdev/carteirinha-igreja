@@ -115,7 +115,7 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("card-view-rg").textContent = m.identidade || "---";
         document.getElementById("card-view-orgao").textContent = m.orgao || "---";
         
-        // Exibe a seção de preview (Isso garante que o HTML exista visualmente antes de tirar a foto)
+        // Exibe a seção de preview
         const previewSection = document.getElementById("preview-section");
         previewSection.style.display = "block";
         previewSection.scrollIntoView({ behavior: 'smooth' });
@@ -127,7 +127,6 @@ document.addEventListener("DOMContentLoaded", () => {
         // Botão Compartilhar WhatsApp
         const btnZap = document.getElementById("btn-whatsapp");
         if(btnZap) {
-            // Removemos cliques antigos para não acumular
             btnZap.onclick = null; 
             
             btnZap.onclick = async () => {
@@ -135,14 +134,18 @@ document.addEventListener("DOMContentLoaded", () => {
                 btnZap.innerText = "Gerando Imagem...";
                 btnZap.disabled = true;
 
+                // --- TRUQUE ANTI-CORTE ---
+                // Adiciona uma classe no body que desativa o encolhimento da tela
+                // para que a foto tirada pelo sistema saia em altíssima resolução.
+                document.body.classList.add("capturing-mode");
+
                 try {
                     const areaSnapshot = document.getElementById("area-para-snapshot");
                     
-                    // html2canvas tira a foto exata do momento
                     const canvas = await html2canvas(areaSnapshot, { 
                         scale: 2, 
                         backgroundColor: "#ffffff",
-                        useCORS: true // Essencial para carregar imagens externas (como a logo)
+                        useCORS: true 
                     });
 
                     canvas.toBlob(async (blob) => {
@@ -159,7 +162,6 @@ document.addEventListener("DOMContentLoaded", () => {
                                 console.log("Compartilhamento cancelado pelo usuário.");
                             }
                         } else {
-                            // Fallback se não for HTTPS ou for Desktop sem Share API
                             const link = document.createElement('a');
                             link.download = file.name;
                             link.href = URL.createObjectURL(blob);
@@ -171,6 +173,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     console.error("Erro ao gerar:", err);
                     alert("Erro ao processar a imagem da carteirinha.");
                 } finally {
+                    // --- FIM DO TRUQUE ANTI-CORTE ---
+                    // Remove a classe para que a carteirinha volte a ficar encolhida 
+                    // e certinha na tela do celular do usuário.
+                    document.body.classList.remove("capturing-mode");
+                    
                     btnZap.innerText = textoOriginal;
                     btnZap.disabled = false;
                 }

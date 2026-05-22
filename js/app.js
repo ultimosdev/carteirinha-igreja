@@ -5,23 +5,132 @@ document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("cadastro-form");
     const tabelaCorpo = document.getElementById("tabela-membros-corpo");
     
+    // --- ELEMENTOS DA CÂMERA ---
+    const btnAbrirCamera = document.getElementById("btn-abrir-camera");
+    const btnFecharCamera = document.getElementById("btn-fechar-camera");
+    const areaCamera = document.getElementById("area-camera");
+    const videoCamera = document.getElementById("video-camera");
+    const btnCapturarFoto = document.getElementById("btn-capturar-foto");
+    const canvasCamera = document.getElementById("canvas-camera");
+    const previewContainer = document.getElementById("preview-foto-container");
+    const previewFoto = document.getElementById("preview-foto");
+    const inputBase64Capturada = document.getElementById("foto-base64-capturada");
+    const fileInput = document.getElementById("membro-foto");
+    const btnRemoverFoto = document.getElementById("btn-remover-foto");
+    const controlesFoto = document.getElementById("controles-foto");
+    let streamCamera = null;
+
+    // ==========================================
+    // LÓGICA DE ESCOLHA DE FOTO OU CÂMERA
+    // ==========================================
+    
+    // 1. Mostrar preview ao anexar um arquivo normal (PC ou Galeria)
+    if (fileInput) {
+        fileInput.addEventListener("change", (e) => {
+            if (e.target.files && e.target.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    previewFoto.src = event.target.result;
+                    previewContainer.style.display = "block";
+                    controlesFoto.style.display = "none";
+                    inputBase64Capturada.value = ""; // Limpa a memória da câmera
+                }
+                reader.readAsDataURL(e.target.files[0]);
+            }
+        });
+    }
+
+    // 2. Abrir a câmera
+    if (btnAbrirCamera) {
+        btnAbrirCamera.addEventListener("click", async () => {
+            try {
+                // facingMode: "user" tenta usar a câmera frontal no celular
+                streamCamera = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
+                videoCamera.srcObject = streamCamera;
+                areaCamera.style.display = "flex";
+                controlesFoto.style.display = "none";
+            } catch (err) {
+                alert("Não foi possível acessar a câmera. Verifique se o navegador tem permissão.");
+                console.error(err);
+            }
+        });
+    }
+
+    // 3. Cancelar e fechar a câmera
+    if (btnFecharCamera) {
+        btnFecharCamera.addEventListener("click", () => {
+            pararCamera();
+            areaCamera.style.display = "none";
+            controlesFoto.style.display = "flex";
+        });
+    }
+
+    // 4. Capturar a foto
+    if (btnCapturarFoto) {
+        btnCapturarFoto.addEventListener("click", () => {
+            const context = canvasCamera.getContext("2d");
+            canvasCamera.width = videoCamera.videoWidth;
+            canvasCamera.height = videoCamera.videoHeight;
+            context.drawImage(videoCamera, 0, 0, canvasCamera.width, canvasCamera.height);
+            
+            // Transforma o quadro de vídeo em uma imagem real
+            const imageDataUrl = canvasCamera.toDataURL("image/png");
+            inputBase64Capturada.value = imageDataUrl;
+            previewFoto.src = imageDataUrl;
+            
+            pararCamera();
+            areaCamera.style.display = "none";
+            previewContainer.style.display = "block";
+        });
+    }
+
+    // 5. Remover a foto escolhida e tentar de novo
+    if (btnRemoverFoto) {
+        btnRemoverFoto.addEventListener("click", () => {
+            inputBase64Capturada.value = "";
+            previewFoto.src = "";
+            fileInput.value = ""; 
+            previewContainer.style.display = "none";
+            controlesFoto.style.display = "flex";
+        });
+    }
+
+    function pararCamera() {
+        if (streamCamera) {
+            streamCamera.getTracks().forEach(track => track.stop());
+            streamCamera = null;
+        }
+    }
+    
+    // ==========================================
+    // LÓGICA DO CADASTRO (ATUALIZADA)
+    // ==========================================
     atualizarTabela();
 
-    // 1. CADASTRAR MEMBRO
     form.addEventListener("submit", async (e) => {
         e.preventDefault();
+        
+        // VALIDAÇÃO DA FOTO: Verifica se tem arquivo anexado OU foto da câmera
+        const fotoFile = fileInput.files[0];
+        const fotoCapturadaBase64 = inputBase64Capturada.value;
+        
+        if (!fotoFile && !fotoCapturadaBase64) {
+            alert("Por favor, tire uma foto ou anexe um arquivo antes de cadastrar.");
+            return; // Bloqueia o envio se não tiver foto
+        }
         
         const btnSalvar = form.querySelector("button[type='submit']");
         btnSalvar.innerText = "Salvando...";
         btnSalvar.disabled = true;
 
         const formData = new FormData(form);
-        const fileInput = document.getElementById("membro-foto");
-        const fotoFile = fileInput.files[0];
 
-        let fotoBase64 = "https://via.placeholder.com/110x140?text=Sem+Foto";
-        if (fotoFile) {
-            fotoBase64 = await converterParaBase64(fotoFile);
+        // Define qual foto usar
+        let fotoFinalBase64 = "https://via.placeholder.com/110x140?text=Sem+Foto";
+        if (fotoCapturadaBase64) {
+            fotoFinalBase64 = fotoCapturadaBase64;
+        } else if (fotoFile) {
+            fotoFinalBase64 = await converterParaBase64(fotoFile);
         }
 
         const dadosMembro = {
@@ -38,7 +147,7 @@ document.addEventListener("DOMContentLoaded", () => {
             sexo: formData.get("sexo"),
             identidade: formData.get("identidade"),
             orgao: formData.get("orgao"),
-            fotoUrl: fotoBase64 
+            fotoUrl: fotoFinalBase64 
         };
 
         const novoMembro = new Membro(dadosMembro);
@@ -47,6 +156,13 @@ document.addEventListener("DOMContentLoaded", () => {
             await salvarMembro(novoMembro);
             alert("Membro cadastrado com sucesso!");
             form.reset();
+            
+            // Reseta toda a interface de foto após o cadastro
+            inputBase64Capturada.value = "";
+            previewFoto.src = "";
+            previewContainer.style.display = "none";
+            controlesFoto.style.display = "flex";
+            
             atualizarTabela();
         } catch (error) {
             alert("Erro ao cadastrar.");
@@ -57,7 +173,9 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // 2. ATUALIZAR TABELA
+    // ==========================================
+    // OUTRAS FUNÇÕES DO SISTEMA (MANTIDAS)
+    // ==========================================
     async function atualizarTabela() {
         const membros = await listarMembros();
         tabelaCorpo.innerHTML = "";
@@ -76,7 +194,6 @@ document.addEventListener("DOMContentLoaded", () => {
             tabelaCorpo.appendChild(tr);
         });
 
-        // Delegação de eventos da Tabela
         tabelaCorpo.onclick = async function(event) {
             const btn = event.target;
             const id = btn.getAttribute('data-id');
@@ -86,17 +203,17 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (membroSelecionado) renderizarCarteirinha(membroSelecionado);
             } 
             else if (btn.classList.contains('btn-del')) {
-                if(confirm("Deseja realmente excluir este membro?")) {
+                const confirmacao = confirm("Você realmente deseja excluir este cadastro? Esta ação não poderá ser desfeita.");
+                if (confirmacao) {
                     await deletarMembro(id);
                     atualizarTabela();
+                    alert("Cadastro excluído com sucesso!");
                 }
             }
         };
     }
 
-    // 3. RENDERIZAR A CARTEIRINHA
     function renderizarCarteirinha(m) {
-        // Preenche os dados
         document.getElementById("card-view-nome").textContent = m.nome ? m.nome.toUpperCase() : "---";
         document.getElementById("card-view-atividade").textContent = m.atividade || "---";
         document.getElementById("card-view-batismo").textContent = formatarParaBR(m.dataBatismo);
@@ -115,16 +232,13 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("card-view-rg").textContent = m.identidade || "---";
         document.getElementById("card-view-orgao").textContent = m.orgao || "---";
         
-        // Exibe a seção de preview
         const previewSection = document.getElementById("preview-section");
         previewSection.style.display = "block";
         previewSection.scrollIntoView({ behavior: 'smooth' });
 
-        // Botão Imprimir
         const btnPrint = document.getElementById("btn-print");
         if(btnPrint) btnPrint.onclick = () => window.print();
 
-        // Botão Compartilhar WhatsApp
         const btnZap = document.getElementById("btn-whatsapp");
         if(btnZap) {
             btnZap.onclick = null; 
@@ -134,14 +248,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 btnZap.innerText = "Gerando Imagem...";
                 btnZap.disabled = true;
 
-                // --- TRUQUE ANTI-CORTE ---
-                // Adiciona uma classe no body que desativa o encolhimento da tela
-                // para que a foto tirada pelo sistema saia em altíssima resolução.
                 document.body.classList.add("capturing-mode");
 
                 try {
                     const areaSnapshot = document.getElementById("area-para-snapshot");
-                    
                     const canvas = await html2canvas(areaSnapshot, { 
                         scale: 2, 
                         backgroundColor: "#ffffff",
@@ -173,11 +283,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     console.error("Erro ao gerar:", err);
                     alert("Erro ao processar a imagem da carteirinha.");
                 } finally {
-                    // --- FIM DO TRUQUE ANTI-CORTE ---
-                    // Remove a classe para que a carteirinha volte a ficar encolhida 
-                    // e certinha na tela do celular do usuário.
                     document.body.classList.remove("capturing-mode");
-                    
                     btnZap.innerText = textoOriginal;
                     btnZap.disabled = false;
                 }
@@ -185,7 +291,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // 4. FUNÇÕES DE APOIO
     function formatarParaBR(dataISO) {
         if(!dataISO || dataISO === "") return "---";
         const partes = dataISO.split("-");

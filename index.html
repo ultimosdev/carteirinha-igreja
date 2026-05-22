@@ -18,31 +18,11 @@
     <div class="grid-layout">
         <section class="form-section">
             <h2>Novo Cadastro</h2>
+            
             <form id="cadastro-form">
                 <div class="form-group">
-                    <label>Foto do Membro (Perfil): *</label>
-                    
-                    <div id="controles-foto" style="display: flex; gap: 10px; flex-wrap: wrap;">
-                        <input type="file" id="membro-foto" accept="image/*" style="flex: 1; padding: 5px;">
-                        <button type="button" id="btn-abrir-camera" style="background-color: #17a2b8; min-width: 130px;">📷 Tirar Foto</button>
-                    </div>
-
-                    <div id="area-camera" style="display: none; flex-direction: column; align-items: center; background: #eef1f6; padding: 15px; border-radius: 8px; margin-top: 10px; border: 1px dashed #ccc;">
-                        <video id="video-camera" style="width: 100%; max-width: 320px; border-radius: 8px; background: #000;" autoplay playsinline></video>
-                        <div style="display: flex; gap: 10px; margin-top: 10px;">
-                            <button type="button" id="btn-capturar-foto" style="background-color: #28a745;">Capturar Imagem</button>
-                            <button type="button" id="btn-fechar-camera" style="background-color: #6c757d;">Cancelar</button>
-                        </div>
-                        <canvas id="canvas-camera" style="display: none;"></canvas>
-                    </div>
-
-                    <div id="preview-foto-container" style="display: none; text-align: center; margin-top: 10px;">
-                        <img id="preview-foto" src="" style="max-width: 150px; border-radius: 8px; border: 2px solid #0b2545;">
-                        <br>
-                        <button type="button" id="btn-remover-foto" style="background-color: #d9534f; padding: 5px 10px; font-size: 12px; margin-top: 8px;">Remover / Trocar Foto</button>
-                    </div>
-                    
-                    <input type="hidden" id="foto-base64-capturada" value="">
+                    <label>Nome Completo:</label>
+                    <input type="text" name="nome" required placeholder="Ex: Marizonia Nascimento Barros">
                 </div>
                 
                 <div class="grid-layout" style="gap: 10px; margin-bottom: 0;">
@@ -118,8 +98,29 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Foto do Membro (Perfil):</label>
-                    <input type="file" id="membro-foto" accept="image/*" required>
+                    <label>Foto do Membro (Perfil): *</label>
+                    
+                    <div id="controles-foto" style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <input type="file" id="membro-foto" accept="image/*" style="flex: 1; padding: 5px;">
+                        <button type="button" id="btn-abrir-camera" style="background-color: #17a2b8; min-width: 130px;">📷 Tirar Foto</button>
+                    </div>
+
+                    <div id="area-camera" style="display: none; flex-direction: column; align-items: center; background: #eef1f6; padding: 15px; border-radius: 8px; margin-top: 10px; border: 1px dashed #ccc;">
+                        <video id="video-camera" style="width: 100%; max-width: 320px; border-radius: 8px; background: #000;" autoplay playsinline></video>
+                        <div style="display: flex; gap: 10px; margin-top: 10px;">
+                            <button type="button" id="btn-capturar-foto" style="background-color: #28a745;">Capturar Imagem</button>
+                            <button type="button" id="btn-fechar-camera" style="background-color: #6c757d;">Cancelar</button>
+                        </div>
+                        <canvas id="canvas-camera" style="display: none;"></canvas>
+                    </div>
+
+                    <div id="preview-foto-container" style="display: none; text-align: center; margin-top: 10px;">
+                        <img id="preview-foto" src="" style="max-width: 150px; border-radius: 8px; border: 2px solid #0b2545;">
+                        <br>
+                        <button type="button" id="btn-remover-foto" style="background-color: #d9534f; padding: 5px 10px; font-size: 12px; margin-top: 8px;">Remover / Trocar Foto</button>
+                    </div>
+                    
+                    <input type="hidden" id="foto-base64-capturada" value="">
                 </div>
 
                 <button type="submit" style="width: 100%; margin-top: 10px;">Cadastrar Membro</button>
@@ -148,11 +149,10 @@
     <section class="preview-section" id="preview-section" style="display: none;">
         <h2>Visualização da Carteirinha</h2>
         
-        <div class="mobile-scroll" style="width: 100%; overflow-x: auto; padding-bottom: 15px;">
-            
-            <div id="area-para-snapshot" style="background-color: white; padding: 15px; border-radius: 8px; width: 550px; margin: 0 auto;">
-                
+        <div class="mobile-scroll">
+            <div id="area-para-snapshot">
                 <div class="carteirinha-wrapper" id="carteirinha-print-area">
+                    
                     <div class="card-face">
                         <div class="frente-header">
                             <div class="logo-placeholder">
@@ -235,15 +235,13 @@
                         </div>
                     </div>
                 </div>
-                
             </div>
-            </div>
+        </div>
 
         <div class="actions-nav">
             <button id="btn-print" style="background-color: #5cb85c;">Imprimir Carteirinha</button>
             <button id="btn-whatsapp" style="background-color: #25D366;">Compartilhar p/ WhatsApp</button>
         </div>
-
     </section>
 </div>
 

@@ -23,8 +23,6 @@ document.addEventListener("DOMContentLoaded", () => {
     // ==========================================
     // LÓGICA DE ESCOLHA DE FOTO OU CÂMERA
     // ==========================================
-    
-    // 1. Mostrar preview ao anexar um arquivo normal (PC ou Galeria)
     if (fileInput) {
         fileInput.addEventListener("change", (e) => {
             if (e.target.files && e.target.files[0]) {
@@ -32,51 +30,60 @@ document.addEventListener("DOMContentLoaded", () => {
                 reader.onload = function(event) {
                     previewFoto.src = event.target.result;
                     previewContainer.style.display = "block";
-                    controlesFoto.style.display = "none";
-                    inputBase64Capturada.value = ""; // Limpa a memória da câmera
+                    if (controlesFoto) controlesFoto.style.display = "none";
+                    if (inputBase64Capturada) inputBase64Capturada.value = ""; 
                 }
                 reader.readAsDataURL(e.target.files[0]);
             }
         });
     }
 
-    // 2. Abrir a câmera
     if (btnAbrirCamera) {
         btnAbrirCamera.addEventListener("click", async () => {
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                alert("Seu navegador atual bloqueou a câmera ou site não está seguro (HTTPS). Tente abrir no Google Chrome oficial.");
+                return;
+            }
             try {
-                // facingMode: "user" tenta usar a câmera frontal no celular
                 streamCamera = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
                 videoCamera.srcObject = streamCamera;
                 areaCamera.style.display = "flex";
-                controlesFoto.style.display = "none";
+                if (controlesFoto) controlesFoto.style.display = "none";
             } catch (err) {
-                alert("Não foi possível acessar a câmera. Verifique se o navegador tem permissão.");
+                alert("Acesso negado à câmera. Verifique as permissões do seu navegador.");
                 console.error(err);
             }
         });
     }
 
-    // 3. Cancelar e fechar a câmera
     if (btnFecharCamera) {
         btnFecharCamera.addEventListener("click", () => {
             pararCamera();
             areaCamera.style.display = "none";
-            controlesFoto.style.display = "flex";
+            if (controlesFoto) controlesFoto.style.display = "flex";
         });
     }
 
-    // 4. Capturar a foto
     if (btnCapturarFoto) {
         btnCapturarFoto.addEventListener("click", () => {
             const context = canvasCamera.getContext("2d");
-            canvasCamera.width = videoCamera.videoWidth;
-            canvasCamera.height = videoCamera.videoHeight;
+            
+            // COMPRESSÃO DA CÂMERA: Evita que a foto fique pesada e trave o banco de dados
+            const MAX_WIDTH = 400; // Tamanho ideal e leve
+            let scale = 1;
+            if (videoCamera.videoWidth > MAX_WIDTH) {
+                scale = MAX_WIDTH / videoCamera.videoWidth;
+            }
+            canvasCamera.width = videoCamera.videoWidth * scale;
+            canvasCamera.height = videoCamera.videoHeight * scale;
+            
             context.drawImage(videoCamera, 0, 0, canvasCamera.width, canvasCamera.height);
             
-            // Transforma o quadro de vídeo em uma imagem real
-            const imageDataUrl = canvasCamera.toDataURL("image/png");
-            inputBase64Capturada.value = imageDataUrl;
-            previewFoto.src = imageDataUrl;
+            // Salvando em JPEG com 75% de qualidade (MUITO mais leve que PNG)
+            const imageDataUrl = canvasCamera.toDataURL("image/jpeg", 0.75);
+            
+            if (inputBase64Capturada) inputBase64Capturada.value = imageDataUrl;
+            if (previewFoto) previewFoto.src = imageDataUrl;
             
             pararCamera();
             areaCamera.style.display = "none";
@@ -84,14 +91,13 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // 5. Remover a foto escolhida e tentar de novo
     if (btnRemoverFoto) {
         btnRemoverFoto.addEventListener("click", () => {
-            inputBase64Capturada.value = "";
-            previewFoto.src = "";
-            fileInput.value = ""; 
+            if(inputBase64Capturada) inputBase64Capturada.value = "";
+            if(previewFoto) previewFoto.src = "";
+            if(fileInput) fileInput.value = ""; 
             previewContainer.style.display = "none";
-            controlesFoto.style.display = "flex";
+            if(controlesFoto) controlesFoto.style.display = "flex";
         });
     }
 
@@ -103,20 +109,21 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     
     // ==========================================
-    // LÓGICA DO CADASTRO (ATUALIZADA)
+    // LÓGICA DO CADASTRO 
     // ==========================================
     atualizarTabela();
 
     form.addEventListener("submit", async (e) => {
         e.preventDefault();
         
-        // VALIDAÇÃO DA FOTO: Verifica se tem arquivo anexado OU foto da câmera
-        const fotoFile = fileInput.files[0];
-        const fotoCapturadaBase64 = inputBase64Capturada.value;
+        let fotoFile = null;
+        if (fileInput) fotoFile = fileInput.files[0];
+        let fotoCapturadaBase64 = "";
+        if (inputBase64Capturada) fotoCapturadaBase64 = inputBase64Capturada.value;
         
         if (!fotoFile && !fotoCapturadaBase64) {
-            alert("Por favor, tire uma foto ou anexe um arquivo antes de cadastrar.");
-            return; // Bloqueia o envio se não tiver foto
+            alert("Por favor, tire uma foto ou anexe um arquivo da galeria antes de cadastrar.");
+            return;
         }
         
         const btnSalvar = form.querySelector("button[type='submit']");
@@ -125,12 +132,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const formData = new FormData(form);
 
-        // Define qual foto usar
         let fotoFinalBase64 = "https://via.placeholder.com/110x140?text=Sem+Foto";
+        
         if (fotoCapturadaBase64) {
-            fotoFinalBase64 = fotoCapturadaBase64;
+            fotoFinalBase64 = fotoCapturadaBase64; // Foto da câmera já está comprimida
         } else if (fotoFile) {
-            fotoFinalBase64 = await converterParaBase64(fotoFile);
+            // Comprime também a foto que veio do computador/galeria
+            fotoFinalBase64 = await comprimirImagemBase64(fotoFile);
         }
 
         const dadosMembro = {
@@ -157,15 +165,14 @@ document.addEventListener("DOMContentLoaded", () => {
             alert("Membro cadastrado com sucesso!");
             form.reset();
             
-            // Reseta toda a interface de foto após o cadastro
-            inputBase64Capturada.value = "";
-            previewFoto.src = "";
-            previewContainer.style.display = "none";
-            controlesFoto.style.display = "flex";
+            if(inputBase64Capturada) inputBase64Capturada.value = "";
+            if(previewFoto) previewFoto.src = "";
+            if(previewContainer) previewContainer.style.display = "none";
+            if(controlesFoto) controlesFoto.style.display = "flex";
             
             atualizarTabela();
         } catch (error) {
-            alert("Erro ao cadastrar.");
+            alert("Erro ao cadastrar. Verifique a conexão com a internet.");
             console.error(error);
         } finally {
             btnSalvar.innerText = "Cadastrar Membro";
@@ -174,10 +181,11 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // ==========================================
-    // OUTRAS FUNÇÕES DO SISTEMA (MANTIDAS)
+    // OUTRAS FUNÇÕES DO SISTEMA
     // ==========================================
     async function atualizarTabela() {
         const membros = await listarMembros();
+        if(!tabelaCorpo) return;
         tabelaCorpo.innerHTML = "";
         
         membros.forEach(m => {
@@ -233,8 +241,10 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("card-view-orgao").textContent = m.orgao || "---";
         
         const previewSection = document.getElementById("preview-section");
-        previewSection.style.display = "block";
-        previewSection.scrollIntoView({ behavior: 'smooth' });
+        if(previewSection) {
+            previewSection.style.display = "block";
+            previewSection.scrollIntoView({ behavior: 'smooth' });
+        }
 
         const btnPrint = document.getElementById("btn-print");
         if(btnPrint) btnPrint.onclick = () => window.print();
@@ -276,7 +286,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             link.download = file.name;
                             link.href = URL.createObjectURL(blob);
                             link.click();
-                            alert("Seu navegador não suporta envio direto. A imagem foi baixada para você enviar manualmente.");
+                            alert("Seu navegador não suporta envio direto. A imagem foi baixada.");
                         }
                     });
                 } catch (err) {
@@ -298,11 +308,31 @@ document.addEventListener("DOMContentLoaded", () => {
         return `${partes[2]}/${partes[1]}/${partes[0]}`;
     }
 
-    function converterParaBase64(file) {
+    // NOVA FUNÇÃO: Comprime imagens de arquivo da Galeria
+    function comprimirImagemBase64(file) {
         return new Promise((resolve) => {
             const reader = new FileReader();
             reader.readAsDataURL(file);
-            reader.onload = () => resolve(reader.result);
+            reader.onload = (event) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement("canvas");
+                    const MAX_WIDTH = 400; // Mantém a foto no tamanho exato pra não pesar
+                    let scale = 1;
+                    if (img.width > MAX_WIDTH) {
+                        scale = MAX_WIDTH / img.width;
+                    }
+                    canvas.width = img.width * scale;
+                    canvas.height = img.height * scale;
+                    
+                    const ctx = canvas.getContext("2d");
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    
+                    // Transforma em JPEG para o Firebase não bloquear o tamanho
+                    resolve(canvas.toDataURL("image/jpeg", 0.75)); 
+                };
+                img.src = event.target.result;
+            };
         });
     }
 });

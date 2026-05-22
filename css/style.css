@@ -274,19 +274,49 @@ body.capturing-mode #area-para-snapshot {
 
 
 /* ==========================================================================
-   CONFIGURAÇÕES DE IMPRESSÃO
+   CONFIGURAÇÕES DE IMPRESSÃO (TAMANHO CREDENCIAL - 11.5cm x 7cm)
    ========================================================================== */
 @media print {
+    /* 1. Esconde todo o site, os botões e os menus */
     body * { visibility: hidden; }
     .preview-section, #area-para-snapshot, .carteirinha-wrapper, .card-face, .card-face * { visibility: visible; }
-    .preview-section { position: absolute; left: 0; top: 0; background: none; margin: 0; padding: 0; }
     
-    #area-para-snapshot { 
+    /* 2. Remove fundos e margens da tela para a folha A4 ficar limpa */
+    .preview-section { 
+        position: absolute; 
+        left: 0; 
+        top: 0; 
+        background: none; 
+        margin: 0; 
         padding: 0; 
-        transform: none !important; 
-        left: 0 !important; 
-        margin: 0 auto !important; 
+        width: 100%;
     }
     
-    .actions-nav { display: none; }
+    #area-para-snapshot { 
+        padding: 0 !important; 
+        margin: 0 !important; 
+        background: none !important;
+        transform: none !important; 
+        left: 0 !important;
+        width: auto !important;
+        min-width: 0 !important;
+    }
+    
+    /* 3. A MÁGICA: Escala exata para 11,5 cm x 7 cm no papel */
+    .carteirinha-wrapper {
+        display: flex;
+        flex-direction: column; 
+        gap: 15px; 
+        
+        /* O número 0.90 é a matemática exata para chegar nos 11,5cm de largura impressos */
+        transform: scale(0.90); 
+        transform-origin: top left; 
+        
+        /* Margem segura para a impressora não cortar as bordas do papel */
+        margin-top: 1cm;
+        margin-left: 1cm;
+    }
+    
+    /* Esconde os botões definitivamente na folha de papel */
+    .actions-nav { display: none !important; }
 }

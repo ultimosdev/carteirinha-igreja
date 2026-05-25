@@ -330,37 +330,36 @@ body.capturing-mode #area-para-snapshot {
    MÁGICA DA IMPRESSÃO EM LOTE (A4 PERFEITO COM DUAS COLUNAS E FOTOS)
    ========================================================================== */
 @media print {
-    /* 1. OBRIGA O NAVEGADOR A IMPRIMIR AS FOTOS DE FUNDO E AS CORES */
+    /* Força o navegador a imprimir imagens de fundo e cores */
     * {
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
         color-adjust: exact !important;
     }
 
-    /* 2. ZERA AS MARGENS DO PAPEL A4 PARA MÁXIMO APROVEITAMENTO */
-    @page { margin: 5mm; }
-
-    /* 3. SOME COM O SITE INTEIRO PARA NÃO ROUBAR ESPAÇO NO PAPEL */
-    .container, header, .form-section, .list-section, .preview-section { 
-        display: none !important; 
+    /* Remove tudo que não é a área de impressão */
+    body > *:not(#area-impressao-lote) {
+        display: none !important;
     }
-    
-    body { background-color: white !important; padding: 0; margin: 0; }
 
-    /* 4. ATIVA A GRADE DE IMPRESSÃO (2 CARTEIRINHAS LADO A LADO) */
+    /* Configuração da página A4 */
+    @page { 
+        size: A4;
+        margin: 10mm; 
+    }
+
     #area-impressao-lote {
         display: grid !important;
-        grid-template-columns: repeat(2, 1fr) !important; 
-        gap: 12mm 4mm !important; 
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 10mm 5mm !important;
         width: 100% !important;
-        margin: 0 !important;
-        padding: 0 !important;
+        visibility: visible !important;
     }
 
-    /* Ajuste de escala cirúrgico para encaixar perfeitamente na largura do A4 */
-    .carteirinha-print-item {
-        transform: scale(0.92) !important;
+    .carteirinha-wrapper {
+        width: 100% !important;
+        transform: scale(0.95) !important;
         transform-origin: top left !important;
-        page-break-inside: avoid !important; 
+        page-break-inside: avoid !important;
     }
 }

@@ -136,10 +136,11 @@ document.addEventListener("DOMContentLoaded", () => {
         };
 
         try {
-            if (idEditando) {
-                await atualizarMembro(parseInt(idEditando), dadosMembro);
-                alert("Atualizado com sucesso!");
-            } else {
+           if (idEditando) {
+    // ATUALIZA O CADASTRO
+    await atualizarMembro(idEditando, dadosMembro); // <--- REMOVA O parseInt()
+    alert("Cadastro atualizado com sucesso!");
+} else {
                 await salvarMembro(new Membro(dadosMembro));
                 alert("Cadastrado com sucesso!");
             }
@@ -188,8 +189,9 @@ document.addEventListener("DOMContentLoaded", () => {
             if (btn.classList.contains('btn-view')) renderizarCarteirinha(membros.find(m => m.id == id));
             else if (btn.classList.contains('btn-editar')) preencherFormulario(membros.find(m => m.id == id));
             else if (btn.classList.contains('btn-del') && confirm("Deseja excluir?")) {
-                await deletarMembro(parseInt(id)); atualizarTabela();
-            }
+                 await deletarMembro(id); // <--- REMOVA O parseInt()
+    atualizarTabela();
+}
         };
     }
 
@@ -199,30 +201,28 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // IMPRIMIR SELECIONADOS (LOTE)
-    document.getElementById("btn-imprimir-selecionados").addEventListener("click", async () => {
-        const selecionados = Array.from(document.querySelectorAll(".chk-membro:checked")).map(chk => parseInt(chk.value));
-        if (selecionados.length === 0) return alert("Selecione pelo menos um membro na tabela.");
+document.getElementById("btn-imprimir-selecionados").addEventListener("click", async () => {
+    const checkboxes = document.querySelectorAll(".chk-membro:checked");
+    if (checkboxes.length === 0) return alert("Selecione pelo menos um membro na tabela.");
 
-        const membros = await listarMembros();
-        const areaLote = document.getElementById("area-impressao-lote");
-        
-        // Junta todo o HTML das carteirinhas de uma vez só
-        let htmlLote = "";
-        selecionados.forEach(id => {
-            const m = membros.find(x => x.id === id);
-            if (m) {
-                htmlLote += gerarTemplateHTMLCard(m);
-            }
-        });
+    const membros = await listarMembros();
+    const areaLote = document.getElementById("area-impressao-lote");
+    
+    // Limpa a área de impressão antes de montar
+    areaLote.innerHTML = ""; 
 
-        // Joga as carteirinhas na tela
-        areaLote.innerHTML = htmlLote;
-
-        // Dá meio segundo (500ms) para o navegador carregar as fotos antes de abrir a aba de impressão
-        setTimeout(() => {
-            window.print();
-        }, 500);
+    checkboxes.forEach(chk => {
+        const m = membros.find(x => x.id == chk.value);
+        if (m) {
+            areaLote.innerHTML += gerarTemplateHTMLCard(m);
+        }
     });
+
+    // Aguarda um tempo maior para garantir que o navegador processou o HTML e as imagens
+    setTimeout(() => {
+        window.print();
+    }, 1000); // 1 segundo é suficiente para carregar as fotos na memória de impressão
+});
 
     // IMPRIMIR APENAS 1 (BOTÃO LÁ EM BAIXO)
     const btnPrint = document.getElementById("btn-print");
@@ -345,10 +345,11 @@ document.addEventListener("DOMContentLoaded", () => {
                                 <div style="display: flex; gap: 15px;"><div class="verso-info"><label>DATA DE NASC.:</label><span>${formatarParaBR(m.dataNascimento)}</span></div><div class="verso-info"><label>SEXO:</label><span>${m.sexo || "---"}</span></div></div>
                                 <div style="display: flex; gap: 15px;"><div class="verso-info"><label>IDENTIDADE:</label><span>${m.identidade || "---"}</span></div><div class="verso-info"><label>ÓRGÃO:</label><span>${m.orgao || "---"}</span></div></div>
                                 <p class="versiculo">"PORTANTO, IDE, ENSINAI TODAS AS NAÇÕES, BATIZANDO-AS EM NOME DO PAI, E DO FILHO, E DO ESPÍRITO SANTO." (MT 28.19)</p>
+                                <p style="font-size: 10px; font-weight: bold; text-align: center; margin-top: 5px; color: #0b2545;">Pr. Manoel Ribeiro dos Santos</p>
+                                <p class="verso-footer-text">VÁLIDO COMO IDENTIFICADOR DE MEMBRO DA IGREJA LOCAL.</p>
                             </div>
                             <div class="verso-side">
-                                <div class="assinatura-area"><div class="linha-assinatura"></div><p>PASTOR</p></div>
-                                <p class="verso-footer-text">VÁLIDO COMO IDENTIFICADOR DE MEMBRO DA IGREJA LOCAL.</p>
+                                
                             </div>
                         </div>
                     </div>

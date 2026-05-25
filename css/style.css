@@ -10,9 +10,7 @@ body {
 }
 
 .container { 
-    max-width: 1200px; 
-    margin: 0 auto; 
-}
+    max-width: 1200px; \n    margin: 0 auto; \n}
 
 .grid-layout { 
     display: flex; 
@@ -40,188 +38,256 @@ table { width: 100%; border-collapse: collapse; margin-top: 15px; }
 th, td { padding: 10px; text-align: left; border-bottom: 1px solid #ddd; font-size: 14px; }
 th { background-color: #0b2545; color: white; }
 
-/* Formulários */
-.form-group { margin-bottom: 12px; }
-.form-group label { display: block; font-weight: 600; margin-bottom: 4px; font-size: 13px; }
-.form-group input, .form-group select { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-
-/* Botões Gerais */
+/* ==========================================================================
+   ESTILOS DOS ELEMENTOS DO FORMULÁRIO
+   ========================================================================== */
+.form-group { margin-bottom: 15px; }
+label { display: block; font-weight: 600; margin-bottom: 5px; font-size: 14px; color: #0b2545; }
+input[type="text"], input[type="date"], select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 14px;
+}
 button {
     background-color: #0b2545;
     color: white;
+    padding: 12px 20px;
     border: none;
-    padding: 10px 15px;
     border-radius: 4px;
     cursor: pointer;
+    font-size: 14px;
     font-weight: bold;
-    transition: background 0.2s;
+    width: 100%;
+    transition: background 0.3s;
 }
 button:hover { background-color: #134074; }
 
-
 /* ==========================================================================
-   SEÇÃO DE VISUALIZAÇÃO E CONTAINER DA CARTEIRINHA
+   SEÇÃO DE PRÉ-VISUALIZAÇÃO DA CARTEIRINHA
    ========================================================================== */
 .preview-section {
-    background: #eef1f6;
+    background: white;
     padding: 20px;
     border-radius: 8px;
-    margin-top: 25px;
-    text-align: center;
-    position: relative;
-    overflow: visible !important;
-}
-
-/* Caixa Mestra da Foto (O html2canvas e a tela usam isso como base) */
-#area-para-snapshot {
-    background-color: white !important;
-    padding: 20px;
-    border-radius: 8px;
-    width: 550px !important; 
-    min-width: 550px !important; 
-    margin: 0 auto;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    width: 100%;
+    margin-top: 20px;
     box-sizing: border-box;
 }
 
+/* Container de rolagem e área de captura */
 .mobile-scroll {
-    width: 100% !important;
-    overflow: visible !important;
+    width: 100%;
+    position: relative;
 }
 
-/* Estrutura que segura as Faces da Carteirinha */
+#area-para-snapshot {
+    width: 500px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+}
+
+/* Wrapper da estrutura das credenciais */
 .carteirinha-wrapper {
     display: flex;
-    flex-direction: column; 
-    align-items: center;    
+    flex-direction: column;
     gap: 20px;
+    width: 500px;
 }
-
-/* Área que contém os botões abaixo da carteirinha */
-.actions-nav {
-    margin-top: 30px;
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    padding-bottom: 20px;
-}
-.actions-nav button {
-    padding: 10px 20px;
-    border-radius: 5px;
-}
-
 
 /* ==========================================================================
-   DESIGN INTERNO DA CARTEIRINHA (FRENTE E VERSO)
+   DESIGN DA CREDENCIAL (FRENTE E VERSO)
    ========================================================================== */
 .card-face {
-    width: 480px;
-    height: 300px;
-    background: white;
+    width: 500px;
+    height: 304px;
+    background-color: #fff;
+    border: 2px solid #0b2545;
     border-radius: 12px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-    position: relative;
-    overflow: hidden;
-    box-sizing: border-box;
-    font-family: Arial, sans-serif;
-    text-align: left;
-    border: 1px solid #ccc;
-}
-
-.card-face::before {
-    content: "";
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 12px;
-    background: #0b2545;
-}
-
-/* Frente - Cabeçalho */
-.frente-header { padding: 20px 15px 5px 15px; display: flex; align-items: center; gap: 10px; }
-.logo-placeholder { 
-    width: 45px; height: 45px; background: #f8f7f6; color: #0b2545; 
-    border-radius: 50%; display: flex; align-items: center; justify-content: center; 
-}
-.logo-igreja { max-width: 100%; max-height: 100%; }
-
-.header-text h3 { margin: 0; font-size: 11px; color: #0b2545; font-weight: 900; }
-.header-text p { margin: 2px 0 0 0; font-size: 8px; color: #555; }
-
-/* Frente - Corpo e Dados */
-.frente-body { display: flex; padding: 10px 15px; gap: 15px; }
-.foto-box { width: 100px; height: 120px; border: 2px solid #0b2545; border-radius: 4px; overflow: hidden; }
-.foto-box img { width: 100%; height: 100%; object-fit: cover; }
-
-.membro-nome { font-size: 16px; font-weight: bold; color: #0b2545; margin: 0 0 5px 0; text-transform: uppercase; }
-.info-row { display: flex; gap: 10px; margin-bottom: 5px; }
-.info-block label { display: block; font-size: 8px; color: #777; font-weight: bold; text-transform: uppercase; }
-.info-block span { font-size: 11px; font-weight: bold; color: #222; }
-
-/* Frente - Rodapé */
-.frente-footer {
-    background: #0b2545;
-    color: white;
-    text-align: center;
-    padding: 5px;
-    font-size: 9px;
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    box-sizing: border-box;
-}
-
-/* Verso - Corpo e Dados */
-.verso-body { padding: 15px; height: 100%; box-sizing: border-box; display: flex; justify-content: space-between; }
-.verso-info { margin-bottom: 5px; }
-.verso-info label { display: block; font-size: 8px; color: #666; font-weight: bold; }
-.verso-info span { font-size: 11px; font-weight: bold; text-transform: uppercase; }
-
-.versiculo {
-    font-size: 8px;
-    font-style: italic;
-    color: #444;
-    margin-top: 10px;
-    border-left: 2px solid #cca43b;
-    padding-left: 5px;
-}
-
-.qrcode-box { width: 80px; height: 80px; border: 1px solid #ccc; }
-.qrcode-box img { width: 100%; height: 100%; }
-
-/* Verso - Assinatura e Rodapé */
-.assinatura-area {
-    margin-top: 20px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
     display: flex;
     flex-direction: column;
+    overflow: hidden;
+    position: relative;
+    box-sizing: border-box;
+}
+
+/* Cabeçalho da Frente */
+.frente-header {
+    background-color: #0b2545;
+    color: white;
+    padding: 10px;
+    display: flex;
     align-items: center;
+    gap: 12px;
+    border-bottom: 3px solid #cca43b;
+}
+.logo-placeholder {
+    width: 55px;
+    height: 55px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+.logo-igreja { width: 90%; height: 90%; object-fit: contain; }
+.header-text h3 { margin: 0; font-size: 13px; letter-spacing: 0.5px; }
+.header-text p { margin: 1px 0 0 0; font-size: 9px; opacity: 0.9; line-height: 1.2; }
+
+/* Corpo da Frente */
+.frente-body {
+    display: flex;
+    padding: 12px;
+    gap: 15px;
+    flex: 1;
+    background: linear-gradient(135deg, #ffffff 70%, #f0f4f8 100%);
+}
+.foto-box {
+    width: 110px;
+    height: 140px;
+    border: 2px solid #0b2545;
+    border-radius: 6px;
+    overflow: hidden;
+    background-color: #eef1f6;
+    flex-shrink: 0;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+}
+.foto-box img { width: 100%; height: 100%; object-fit: cover; }
+
+/* Dados da Frente */
+.dados-principais {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 8px;
+}
+.membro-nome {
+    margin: 0 0 4px 0;
+    color: #0b2545;
+    font-size: 18px;
+    border-bottom: 2px solid #e5e5e5;
+    padding-bottom: 3px;
+    text-transform: uppercase;
+    font-weight: 700;
+}
+.info-row { display: flex; gap: 15px; }
+.info-block { flex: 1; }
+.info-block label {
+    font-size: 9px;
+    color: #777;
+    text-transform: uppercase;
+    margin-bottom: 1px;
+    font-weight: bold;
+}
+.info-block span {
+    font-size: 13px;
+    font-weight: 600;
+    color: #222;
+    display: block;
+}
+.frente-footer {
+    background-color: #0b2545;
+    color: #cca43b;
+    text-align: center;
+    font-size: 9px;
+    font-weight: bold;
+    padding: 5px 0;
+    letter-spacing: 1px;
+}
+
+/* Verso da Credencial */
+.verso-body {
+    padding: 15px;
+    flex: 1;
+    display: flex;
+    background: #ffffff;
+}
+.verso-grid {
+    display: grid;
+    grid-template-columns: 1fr 130px;
+    gap: 15px;
     width: 100%;
 }
-.linha-assinatura {
-    width: 90%;
-    border-top: 1px solid #000;
-    margin-bottom: 5px;
+.verso-dados {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    border-right: 1px dashed #ccc;
+    padding-right: 12px;
 }
-.assinatura-area p {
-    margin: 0;
-    font-size: 8px;
-    font-weight: bold;
-    text-transform: uppercase;
-    color: #333;
+.verso-info {
+    border-bottom: 1px solid #eee;
+    padding-bottom: 2px;
+    display: flex;
+    flex-direction: column;
 }
+.verso-info label { font-size: 8px; color: #888; margin: 0; font-weight: bold; }
+.verso-info span { font-size: 11px; font-weight: 600; color: #111; text-transform: uppercase; }
 
-.verso-footer-text {
-    margin-top: 15px;
-    font-size: 7px;
-    font-weight: bold;
+.versiculo {
+    font-style: italic;
+    font-size: 8.5px;
+    color: #555;
+    margin: 6px 0 0 0;
+    line-height: 1.3;
     text-align: center;
-    color: #0b2545;
-    text-transform: uppercase;
-    line-height: 1.2;
-    padding: 5px 5px 0 5px;
-    border-top: 1px solid #ccc;
+    font-weight: 500;
 }
 
+/* Lateral do Verso (Assinatura) */
+.verso-side {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding-left: 5px;
+}
+.assinatura-area {
+    text-align: center;
+    margin-top: 45px;
+    width: 100%;
+}
+.linha-assinatura { border-top: 1px solid #333; width: 100%; margin-bottom: 4px; }
+.assinatura-area p { margin: 0; font-size: 10px; font-weight: bold; color: #0b2545; }
+.verso-footer-text {
+    font-size: 7.5px;
+    color: #999;
+    text-align: center;
+    line-height: 1.2;
+    margin: 0;
+    font-weight: bold;
+}
+
+/* Botões de Ação do Painel */
+.actions-nav {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+    justify-content: center;
+}
+.actions-nav button { max-width: 240px; padding: 12px; }
+
+/* Modo de Captura do html2canvas */
+body.capturing-mode #area-para-snapshot {
+    margin: 0 !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    width: 500px !important;
+    display: block !important;
+}
 
 /* ==========================================================================
-   A MÁGICA DO MOBILE (AQUI O CORTE FOI RESOLVIDO)
+   A MÁGICA DO MOBILE (COM BARRA DE ROLAGEM HORIZONTAL)
    ========================================================================== */
 @media (max-width: 600px) {
     .form-section, .list-section {
@@ -236,87 +302,65 @@ button:hover { background-color: #134074; }
         padding: 0 20px;
         box-sizing: border-box;
     }
-    .actions-nav button {
-        width: 100%;
-    }
+    .actions-nav button { width: 100%; max-width: 100%; }
 
+    /* Libera a rolagem lateral no telemóvel */
     .mobile-scroll {
-        overflow: hidden !important;
+        width: 100% !important;
+        overflow-x: auto !important;  
+        overflow-y: hidden !important;
+        -webkit-overflow-scrolling: touch; 
+        padding-bottom: 15px; 
         position: relative;
     }
 
-    /* Solução matemática para caber na tela sem o navegador cortar as bordas */
+    /* Mantém o tamanho real para gerar a rolagem horizontal perfeita */
     #area-para-snapshot {
-        width: 500px !important; 
-        min-width: 500px !important;
+        width: 520px !important; 
+        min-width: 520px !important;
         padding: 10px !important;
         margin: 0 !important;
-        
-        /* Centraliza usando left e encolhe com transform (Ignora bugs de flexbox do celular) */
         position: relative;
-        left: 50%;
-        transform: translateX(-50%) scale(0.65);
-        transform-origin: top center;
-        zoom: normal !important;
-    }
-}
-
-
-/* ==========================================================================
-   MODO FOTOGRAFIA (USADO PELO JAVASCRIPT)
-   ========================================================================== */
-/* Garante que a foto saia no tamanho e posição reais, ignorando o celular */
-body.capturing-mode #area-para-snapshot {
-    transform: none !important;
-    left: 0 !important;
-    margin: 0 auto !important;
-}
-
-
-/* ==========================================================================
-   CONFIGURAÇÕES DE IMPRESSÃO (TAMANHO CREDENCIAL - 11.5cm x 7cm)
-   ========================================================================== */
-@media print {
-    /* 1. Esconde todo o site, os botões e os menus */
-    body * { visibility: hidden; }
-    .preview-section, #area-para-snapshot, .carteirinha-wrapper, .card-face, .card-face * { visibility: visible; }
-    
-    /* 2. Remove fundos e margens da tela para a folha A4 ficar limpa */
-    .preview-section { 
-        position: absolute; 
-        left: 0; 
-        top: 0; 
-        background: none; 
-        margin: 0; 
-        padding: 0; 
-        width: 100%;
-    }
-    
-    #area-para-snapshot { 
-        padding: 0 !important; 
-        margin: 0 !important; 
-        background: none !important;
         transform: none !important; 
         left: 0 !important;
-        width: auto !important;
-        min-width: 0 !important;
+    }
+}
+
+/* ==========================================================================
+   MÁGICA DA IMPRESSÃO EM LOTE (A4 PERFEITO COM DUAS COLUNAS E FOTOS)
+   ========================================================================== */
+@media print {
+    /* 1. OBRIGA O NAVEGADOR A IMPRIMIR AS FOTOS DE FUNDO E AS CORES */
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+    }
+
+    /* 2. ZERA AS MARGENS DO PAPEL A4 PARA MÁXIMO APROVEITAMENTO */
+    @page { margin: 5mm; }
+
+    /* 3. SOME COM O SITE INTEIRO PARA NÃO ROUBAR ESPAÇO NO PAPEL */
+    .container, header, .form-section, .list-section, .preview-section { 
+        display: none !important; 
     }
     
-    /* 3. A MÁGICA: Escala exata para 11,5 cm x 7 cm no papel */
-    .carteirinha-wrapper {
-        display: flex;
-        flex-direction: column; 
-        gap: 15px; 
-        
-        /* O número 0.90 é a matemática exata para chegar nos 11,5cm de largura impressos */
-        transform: scale(0.90); 
-        transform-origin: top left; 
-        
-        /* Margem segura para a impressora não cortar as bordas do papel */
-        margin-top: 1cm;
-        margin-left: 1cm;
+    body { background-color: white !important; padding: 0; margin: 0; }
+
+    /* 4. ATIVA A GRADE DE IMPRESSÃO (2 CARTEIRINHAS LADO A LADO) */
+    #area-impressao-lote {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important; 
+        gap: 12mm 4mm !important; 
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
     }
-    
-    /* Esconde os botões definitivamente na folha de papel */
-    .actions-nav { display: none !important; }
+
+    /* Ajuste de escala cirúrgico para encaixar perfeitamente na largura do A4 */
+    .carteirinha-print-item {
+        transform: scale(0.92) !important;
+        transform-origin: top left !important;
+        page-break-inside: avoid !important; 
+    }
 }
